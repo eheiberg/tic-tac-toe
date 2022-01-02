@@ -1,77 +1,57 @@
-# Creates Board
 class Board
-  attr_accessor :line_one, :line_two, :line_three
+  @@board = nil
+  @@turn = 0
 
-  # Creates Class Variables for all sub-classes to access (board)
-  @@row_zero = [' | 1 | 2 | 3 |']
-  @@row_one = ['1|   |   |   |']
-  @@row_two = ['2|   |   |   |']
-  @@row_three = ['3|   |   |   |']
+  attr_reader :marker
 
-  def initialize
-  end
+  class << self
+    def setup
+      row = [' ', ' ', ' ']
+      @@board = [
+        row.dup,
+        row.dup,
+        row.dup,
+      ]
+    end
 
-  # Puts Board to Terimal
-  def show_board
-    puts @@row_zero
-    puts @@row_one
-    puts @@row_two
-    puts @@row_three
-  end
-end
-
-# Module for calculating array placement
-module Placement
-  def calculate_array(array_num)
-    if array_num == 1
-     @@row_one
-    elsif array_num == 2
-     @@row_two
-    else
-      @@row_three
+    def display
+      setup unless @@board
+      puts "========TURN #{@@turn }========="
+      @@board.each { |r| pp r }
+      puts '======================='
     end
   end
-end
 
-# Creates instance of Board class
-game = Board.new
-game.show_board
-puts game.line_two
+  def initialize(marker)
+    @marker = marker
+  end
 
-# Class for O Pieces
-class Pieceoh < Board
-  attr_accessor :array_num, :space_num, :display
+  def place(row, col)
+    if legal_move?(row, col)
+      @@turn += 1
+      @@board[row][col] = marker
+      self.class.display
+      return
+    end
 
-  include Placement
-  def initialize(array_num, space_num)
-    @array_num = array_num
-    @space_num = space_num
-    @display = 'O'
-    super
+    puts 'This space is already occupied! Try again.'
+  end
+
+  private
+
+  def legal_move?(row, col)
+    @@board[row][col].strip.empty?
   end
 end
 
-# Class for X Pieces
-class Piecex < Board
-  attr_accessor :array_num, :space_num, :display
+# Begin play
+Board.setup
+p1 = Board.new('X')
+p2 = Board.new('O')
 
-  def initialize(array_num, space_num)
-    @array_num = array_num.to_i
-    @space_num = space_num.to_i
-    @display = 'X'
-    super
-  end
-end
-
-# Run Game
-
-turn_one = Pieceoh.new(2, 3)
-puts turn_one.array_num
-puts turn_one.space_num
-puts turn_one.display
-puts turn_one.calculate_array(2)
-
-turn_two = Piecex.new(1, 3)
-puts turn_two.array_num
-puts turn_two.space_num
-puts turn_two.display
+p1.place(0, 0)
+p2.place(0, 1)
+p1.place(1, 1)
+p2.place(2, 2)
+p1.place(0, 1)
+p1.place(0, 2)
