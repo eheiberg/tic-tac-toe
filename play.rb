@@ -18,9 +18,6 @@ class Game
   def initialize
     @player1 = Player.new('X')
     @player2 = Player.new('O')
-
-    pp "#{@player1.full_name} if player 1"
-    pp "#{@player2.full_name} if player 2"
     @current_player = @player1
     @turn_number = 1
     row = [' ', ' ', ' ']
